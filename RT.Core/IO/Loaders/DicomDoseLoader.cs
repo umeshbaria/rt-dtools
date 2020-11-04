@@ -20,8 +20,8 @@ namespace RT.Core.IO.Loaders
             DicomFile file0 = files[0];
             var gridLoader = new GridBasedStructureDicomLoader();
             dicomObject.Grid = gridLoader.Load(files, progress);
-            dicomObject.Grid.Scaling = file0.Dataset.Get<float>(DicomTag.DoseGridScaling, 1.0f);
-            dicomObject.Grid.ValueUnit = unitFromString(file0.Dataset.Get<string>(DicomTag.DoseUnits, "Relative"));
+            dicomObject.Grid.Scaling = file0.Dataset.GetValue<float>(DicomTag.DoseGridScaling, 1);
+            dicomObject.Grid.ValueUnit = unitFromString(file0.Dataset.GetString(DicomTag.DoseUnits));
             dicomObject.Grid.Name = Path.GetFileNameWithoutExtension(file0.File.Name);
         }
 

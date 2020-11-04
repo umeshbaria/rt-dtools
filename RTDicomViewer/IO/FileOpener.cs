@@ -87,23 +87,23 @@ namespace RTDicomViewer.IO
         public async void BeginOpenImagesAsync()
         {
             string[] files;
-            if((files = getFileNames("Open Dicom Image(s)",true)) != null)
+            if((files = getFileNames("Open Dicom Image(s)", true)) != null)
             {
                 var pi = ProgressService.CreateNew("Loading Dicom Image(s)...", false);
                 var progress = new Progress<double>(x => { pi.ProgressAmount = (int)x; });
-
                 DicomImageObject openedObject = null;
-                await Task.Run(async () =>
-                {
-                    try
-                    {
-                        openedObject = await DicomLoader.LoadDicomImageAsync(files, progress);
-                    }
-                    catch (Exception e)
-                    {
-                        Messenger.Default.Send(new NotificationMessage("Could not open file: " + e.Message));
-                    }
-                });
+                openedObject = DicomLoader.LoadDicomImage(@"F:\Work\Project\Xamarin\rt-dtools\Anon LA1\123.dcm", progress);
+                //await Task.Run(async () =>
+                //{
+                //    try
+                //    {
+                //        openedObject = DicomLoader.LoadDicomImage(@"F:\Work\Project\Xamarin\rt-dtools\Anon LA1\123.dcm", progress);
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        Messenger.Default.Send(new NotificationMessage("Could not open file: " + e.Message));
+                //    }
+                //});
                 if (openedObject != null)
                     Messenger.Default.Send(new RTDicomViewer.Message.RTObjectAddedMessage<DicomImageObject>(openedObject));
 

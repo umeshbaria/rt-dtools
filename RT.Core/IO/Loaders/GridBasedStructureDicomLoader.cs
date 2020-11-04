@@ -222,8 +222,8 @@ namespace RT.Core.IO.Loaders
                 swapped = false;
                 for (int i = 1; i < files.Length; i++)
                 {
-                    if (files[i - 1].Dataset.Get<double[]>(DicomTag.ImagePositionPatient)[2] >
-                        files[i].Dataset.Get<double[]>(DicomTag.ImagePositionPatient)[2])
+                    if (files[i - 1].Dataset.GetValues<double>(DicomTag.ImagePositionPatient)[2] >
+                        files[i].Dataset.GetValues<double>(DicomTag.ImagePositionPatient)[2])
                     {
                         swapped = true;
                         DicomFile temp = files[i];

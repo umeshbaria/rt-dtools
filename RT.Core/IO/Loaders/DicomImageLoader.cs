@@ -23,8 +23,8 @@ namespace RT.Core.IO.Loaders
 
             try
             {
-                dicomObject.LUT.Window = files[0].Dataset.Get<int>(DicomTag.WindowWidth);
-                dicomObject.LUT.Level = files[0].Dataset.Get<int>(DicomTag.WindowCenter);
+                dicomObject.LUT.Window = files[0].Dataset.GetSingleValue<float>(DicomTag.WindowWidth);
+                dicomObject.LUT.Level = files[0].Dataset.GetSingleValue<int>(DicomTag.WindowCenter);
             }catch(Exception e)
             {
                 //Here we should try to set to the median pixel or something

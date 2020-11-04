@@ -47,6 +47,18 @@ namespace RT.Core.IO
             return img;
         }
 
+        public static DicomImageObject LoadDicomImage(string fileNames, IProgress<double> progress)
+        {
+            List<DicomFile> files = new List<DicomFile>();
+            if (DicomFile.HasValidHeader(fileNames))
+                files.Add(DicomFile.Open(fileNames));
+
+            var loader = new DicomImageLoader();
+            var img = new DicomImageObject();
+            loader.Load(files.ToArray(), img, progress);
+            return img;
+        }
+
         public static async Task<DicomImageObject> LoadDicomImageAsync(string fileName, IProgress<double> progress)
         {
             return await LoadDicomImageAsync(new string[] { fileName }, progress);

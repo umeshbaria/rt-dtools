@@ -21,12 +21,12 @@ namespace RT.Core.IO.Loaders
             }
             if(files.Length > 0)
             {
-                dicomObject.PatientId = files[0].Dataset.Get<string>(DicomTag.PatientID, "");
-                dicomObject.PatientName = files[0].Dataset.Get<string>(DicomTag.PatientName, "");
-                dicomObject.SeriesUid = files[0].Dataset.Get<string>(DicomTag.SeriesInstanceUID, "");
-                dicomObject.Modality = files[0].Dataset.Get<string>(DicomTag.Modality, "");
-                dicomObject.SeriesDescription = files[0].Dataset.Get<string>(DicomTag.SeriesDescription, "");
-                dicomObject.StudyDescription = files[0].Dataset.Get<string>(DicomTag.StudyDescription, "");
+                dicomObject.PatientId = files[0].Dataset.GetString(DicomTag.PatientID);
+                dicomObject.PatientName = files[0].Dataset.GetString(DicomTag.PatientName);
+                dicomObject.SeriesUid = files[0].Dataset.GetString(DicomTag.SeriesInstanceUID);
+                dicomObject.Modality = files[0].Dataset.GetString(DicomTag.Modality);
+                dicomObject.SeriesDescription = files[0].Dataset.GetString(DicomTag.SeriesDescription);
+                dicomObject.StudyDescription = files[0].Dataset.GetString(DicomTag.StudyDescription);
             }
         }
     }

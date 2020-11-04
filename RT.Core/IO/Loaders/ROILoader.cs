@@ -14,18 +14,18 @@ namespace RT.Core.IO.Loaders
             base.Load(files, structureSet, progress);
             DicomFile file = files[0];
 
-            structureSet.Name = file.Dataset.Get<string>(DicomTag.StructureSetLabel, "");
+            structureSet.Name = file.Dataset.GetString(DicomTag.StructureSetLabel);
 
             Dictionary<int, string> roi_names = new Dictionary<int, string>();
-            DicomSequence structs = file.Dataset.Get<DicomSequence>(DicomTag.StructureSetROISequence);
+            DicomSequence structs = file.Dataset.GetDicomItem<DicomSequence>(DicomTag.StructureSetROISequence);
             foreach (DicomDataset item in structs)
             {
-                roi_names.Add(item.Get<int>(DicomTag.ROINumber), item.Get<string>(DicomTag.ROIName));
+                roi_names.Add(item.GetSingleValue<int>(DicomTag.ROINumber), item.GetSingleValue<string>(DicomTag.ROIName));
             }
 
             List<RegionOfInterest> rois = new List<RegionOfInterest>();
 
-            DicomSequence s = file.Dataset.Get<DicomSequence>(DicomTag.ROIContourSequence);
+            DicomSequence s = file.Dataset.GetDicomItem<DicomSequence>(DicomTag.ROIContourSequence);
 
             //Track the item number to report progress
             double total = s.Items.Count;
@@ -37,16 +37,16 @@ namespace RT.Core.IO.Loaders
                 progress.Report(100 * num / total);
 
                 RegionOfInterest roi = new RegionOfInterest();
-                int[] color = item.Get<int[]>(DicomTag.ROIDisplayColor,new int[] { 0, 0, 0 });
+                int[] color = item.GetSingleValueOrDefault<int[]>(DicomTag.ROIDisplayColor,new int[] { 0, 0, 0 });
                 roi.Color = DicomColor.FromRgb(color[0],color[1],color[2]);
-                roi.ROINumber = item.Get<int>(DicomTag.ReferencedROINumber);
+                roi.ROINumber = item.GetSingleValue<int>(DicomTag.ReferencedROINumber);
                 if (roi_names.ContainsKey(roi.ROINumber))
                     roi.Name = roi_names[roi.ROINumber];
 
                 DicomSequence roi_definitions;
                 try
                 {
-                    roi_definitions = item.Get<DicomSequence>(DicomTag.ContourSequence);
+                    roi_definitions = item.GetDicomItem<DicomSequence>(DicomTag.ContourSequence);
                 }
                 catch (Exception e)
                 {
@@ -58,11 +58,11 @@ namespace RT.Core.IO.Loaders
 
                 foreach (DicomDataset contourSlice in roi_definitions.Items)
                 {
-                    int vertex_count = contourSlice.Get<int>(DicomTag.NumberOfContourPoints);
-                    double[] vertices = contourSlice.Get<double[]>(DicomTag.ContourData);
+                    int vertex_count = contourSlice.GetSingleValue<int>(DicomTag.NumberOfContourPoints);
+                    double[] vertices = contourSlice.GetValues<double>(DicomTag.ContourData);
 
                     //Attempt to get the contour type from the dicom tag
-                    string type = contourSlice.Get<string>(DicomTag.ContourGeometricType, "");
+                    string type = contourSlice.GetString(DicomTag.ContourGeometricType);
                     Enum.TryParse<ContourType>(type, out ContourType contourType);
                     //Assume that each contour of the roi is of the same type...
                     roi.Type = contourType;
